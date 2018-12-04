@@ -1,12 +1,8 @@
-// server.js
-// require uuid
 const uuidv4 = require('uuid/v4');
 const express = require('express');
 const WebSocket = require('ws');
 const SocketServer = WebSocket.Server;
 
-
-// Set the port to 3001
 const PORT = 3001;
 
 // Create a new express server
@@ -17,8 +13,6 @@ const server = express()
 
 // Create the WebSockets server
 const wss = new SocketServer({ server });
-
-
 
 // Set up a callback that will run when a client connects to the server
 // When a client connects they are assigned a socket, represented by
@@ -32,7 +26,6 @@ wss.on('connection', (ws) => {
   users.type = 'incomingUserUpdate';
   users.amount = wss.clients.size;
   wss.broadcast(JSON.stringify(users));
-
 
 
   ws.on("message", function recieveData(data) {
@@ -50,14 +43,11 @@ wss.on('connection', (ws) => {
       console.log("mucho problemo");
     }
 
-
     // stringify the new message with id for server to read
     const stringMessage = JSON.stringify(message);
     // sends the data back to the client with uuid id included
     wss.broadcast(stringMessage);
-    // console.log('in server: ', message)
-    // console.log(`ID ${uuid()} User ${message.username} said ${message.content}`);
-  })
+  });
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
   ws.on('close', () => {

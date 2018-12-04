@@ -26,11 +26,6 @@ class App extends Component {
       console.log("mesages", messages);
       // send new message to the websocket server
       this.socket.send(JSON.stringify(newMessage));
-      // const notificationMessage = {type: "postNotification", content: `${this.state.currentUser.name} has changed their name to ${this.state.currentUser.changeName}`};
-      // this.setState({currentUser: {name: this.state.currentUser.changeName, changeName: ""}});
-      // this.socket.send(JSON.stringify(notificationMessage));
-
-      // this.setState({messages: messages})
     }
   }
 
@@ -45,8 +40,6 @@ class App extends Component {
                                   content: `${oldUsername} has changed their name to ${newUsername}`};
 
 
-          // send new message to the websocket server
-
           this.setState({currentUser: {name: newUsername}});
           this.socket.send(JSON.stringify(notificationMessage));
       }
@@ -54,20 +47,16 @@ class App extends Component {
 
 
   //connect websockets in componentdidmount
-  // in App.jsx
   componentDidMount() {
+
     console.log("componentDidMount <App />");
     // creates websocket object
     this.socket = new WebSocket("ws://localhost:3001", "protocolOne");
     this.socket.onopen = event => {
       console.log("Connected to Server");
 
-    // if (data.type === 'incomingUserUpdate') {
-    //   this.setState({ currentUser: {amountUsers: data.amount }});
-
-    //    }
-
     }
+
     this.socket.onmessage = (event) => {
 
       const message = JSON.parse(event.data);
@@ -76,7 +65,7 @@ class App extends Component {
 
       case "incomingMessage":
 
-        message.type = "postMessage"
+        // message.type = "postMessage"
         this.setState({ messages: [...this.state.messages, message ] });
         // handle incoming message
         break;
@@ -95,16 +84,8 @@ class App extends Component {
 
       }
     }
-
-    // setTimeout(() => {
-    //   console.log("Simulating incoming message");
-    //   this.newMessageFn();
-    //   // Add a new message to the list of messages in the data store
-    //   // Update the state of the app component.
-    //   // Calling setState will trigger a call to render() in App and all child components.
-
-    // }, 3000);
   }
+
   render() {
     return (
       <div>
