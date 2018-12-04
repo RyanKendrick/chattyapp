@@ -17,6 +17,9 @@
 * sockjs-client
 * style-loader
 * react-dom
+* express
+* ws
+* uuid
 
 
 ## Screenshots
