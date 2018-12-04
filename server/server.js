@@ -18,6 +18,8 @@ const server = express()
 // Create the WebSockets server
 const wss = new SocketServer({ server });
 
+
+
 // Set up a callback that will run when a client connects to the server
 // When a client connects they are assigned a socket, represented by
 // the ws parameter in the callback.
@@ -25,11 +27,30 @@ wss.on('connection', (ws) => {
 
   console.log('Client connected');
 
+  const users = {};
+  users.id = uuidv4();
+  users.type = 'incomingUserUpdate';
+  users.amount = wss.clients.size;
+  wss.broadcast(JSON.stringify(users));
+
+
+
   ws.on("message", function recieveData(data) {
+    console.log(data);
     // JSON.parse data to be readable/usable as a string
     const message = JSON.parse(data);
     // adds key "id" (uuid generated) to data and sets it to variable "message"
     message.id = uuidv4();
+
+    if (message.type === "postMessage") {
+      message.type = "incomingMessage";
+    } else if (message.type === "postNotification") {
+      message.type = "incomingNotification";
+    } else {
+      console.log("mucho problemo");
+    }
+
+
     // stringify the new message with id for server to read
     const stringMessage = JSON.stringify(message);
     // sends the data back to the client with uuid id included
@@ -39,7 +60,11 @@ wss.on('connection', (ws) => {
   })
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
-  ws.on('close', () => console.log('Client disconnected'));
+  ws.on('close', () => {
+    console.log('Client disconnected');
+    users.amount = wss.clients.size;
+    wss.broadcast(JSON.stringify(users));
+  });
 });
 
 // Broadcast to all.
